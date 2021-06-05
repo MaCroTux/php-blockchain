@@ -10,9 +10,9 @@ use PHPUnit\Framework\TestCase;
 
 final class NodeTest extends TestCase
 {
-    /**
-     * @var Node
-     */
+    private const DIFFICULTY = 0;
+
+    /** @var Node */
     private $node;
 
     public function setUp(): void
@@ -20,7 +20,7 @@ final class NodeTest extends TestCase
         /** @var P2pServer $p2pServer */
         $p2pServer = $this->createMock(P2pServer::class);
         $this->node = new Node(
-            new Miner(new Blockchain(Block::genesis()), new ZeroPrefix()),
+            new Miner(new Blockchain(Block::genesis(self::DIFFICULTY)), new ZeroPrefix()),
             $p2pServer
         );
     }

@@ -1,5 +1,5 @@
 {
-    "name": "akondas/php-blockchain",
+    "name": "macrotux/php-blockchain",
     "type": "library",
     "description": "Minimal working blockchain implemented in PHP",
     "license": "MIT",
@@ -7,6 +7,10 @@
         {
             "name": "Arkadiusz Kondas",
             "email": "arkadiusz.kondas@gmail.com"
+        },
+        {
+            "name": "Francisco Javier Feria",
+            "email": "macrotux@gmail.com"
         }
     ],
     "require": {

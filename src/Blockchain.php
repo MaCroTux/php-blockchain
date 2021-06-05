@@ -29,7 +29,8 @@ final class Blockchain
 
     public function isValid(): bool
     {
-        if (! $this->blocks[0]->isEqual(Block::genesis())) {
+        $block = $this->blocks[0];
+        if (! $this->blocks[0]->isEqual(Block::genesis($block->difficulty()))) {
             return false;
         }
 

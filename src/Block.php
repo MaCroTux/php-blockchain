@@ -64,9 +64,9 @@ final class Block implements JsonSerializable
         $this->nonce = $nonce;
     }
 
-    public static function genesis(): self
+    public static function genesis(int $difficulty): self
     {
-        return new self(0, '8b31c9ec8c2df21968aca3edd2bda8fc77ed45b0b3bc8bc39fa27d5c795bc829', '', new DateTimeImmutable('2018-02-23 23:59:59'), 'PHP is awesome!', 0, 0);
+        return new self(0, '8b31c9ec8c2df21968aca3edd2bda8fc77ed45b0b3bc8bc39fa27d5c795bc829', '', new DateTimeImmutable('2018-02-23 23:59:59'), 'PHP is awesome!', $difficulty, 0);
     }
 
     public function isNextValid(self $block): bool

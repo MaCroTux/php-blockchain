@@ -10,16 +10,18 @@ use ReflectionClass;
 
 final class BlockchainTest extends TestCase
 {
+    private const DIFFICULTY = 0;
+
     public function testNewBlockchainValidation(): void
     {
-        $chain = new Blockchain(Block::genesis());
+        $chain = new Blockchain(Block::genesis(self::DIFFICULTY));
 
         self::assertTrue($chain->isValid());
     }
 
     public function testBlockchainValidation(): void
     {
-        $chain = new Blockchain(Block::genesis());
+        $chain = new Blockchain(Block::genesis(self::DIFFICULTY));
         $chain->add(new Block(
             1,
             '8949eb1e258531d38e441b84ed2711c1140accbe8d3d0de119ca0149a069f4d0',

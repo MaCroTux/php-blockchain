@@ -14,15 +14,17 @@ use Blockchain\WebServer;
 
 require __DIR__.'/../vendor/autoload.php';
 
+const DIFFICULTY = 20;
+
 $params = getopt('', ['http-port::', 'p2p-port::']);
-$httpPort = $params['http-port'] ?? 8080;
-$p2pPort = $params['p2p-port'] ?? 3030;
+$httpPort = '0.0.0.0:' . ($params['http-port'] ?? 8080);
+$p2pPort = '0.0.0.0:' . ($params['p2p-port'] ?? 3030);
 
 $loop = Factory::create();
 
 $p2pServer =  new Node\P2pServer(new Connector($loop));
 $node = new Node(
-    new Miner(new Blockchain(Block::genesis()), new HashDifficulty\ZeroPrefix()),
+    new Miner(new Blockchain(Block::genesis(DIFFICULTY)), new HashDifficulty\ZeroPrefix()),
     $p2pServer
 );
 $p2pServer->attachNode($node);
@@ -30,7 +32,7 @@ $p2pServer->attachNode($node);
 (new SocketServer($p2pPort, $loop))->on('connection', $p2pServer);
 (new HttpServer(new WebServer($node)))->listen(new SocketServer($httpPort, $loop));
 
-echo sprintf("Web server running at http://127.0.0.1:%s\n", $httpPort);
-echo sprintf("P2p server running at tcp://127.0.0.1:%s\n", $p2pPort);
+echo sprintf("Web server running at http://%s\n", $httpPort);
+echo sprintf("P2p server running at tcp://%s\n", $p2pPort);
 
 $loop->run();

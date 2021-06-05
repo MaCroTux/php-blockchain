@@ -9,9 +9,11 @@ use PHPUnit\Framework\TestCase;
 
 final class MinerTest extends TestCase
 {
+    private const DIFFICULTY = 0;
+
     public function testMineNewBlockWithGivenData(): void
     {
-        $miner = new Miner(new Blockchain(Block::genesis()), new ZeroPrefix());
+        $miner = new Miner(new Blockchain(Block::genesis(self::DIFFICULTY)), new ZeroPrefix());
         $block = $miner->mineBlock('Working hard make you hard');
 
         self::assertInstanceOf(Block::class, $block);
