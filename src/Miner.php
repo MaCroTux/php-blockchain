@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Blockchain;
 
 use Blockchain\Miner\HashDifficulty;
+use Blockchain\Node\MemPool;
 use DateTimeImmutable;
 
 final class Miner
@@ -25,7 +26,7 @@ final class Miner
         $this->hashDifficulty = $hashDifficulty;
     }
 
-    public function mineBlock(string $data): Block
+    public function mineBlock(string $data, MemPool $memPool): ?Block
     {
         $nonce = 0;
         $lastBlock = $this->blockchain->last();
@@ -34,10 +35,17 @@ final class Miner
         $previousHash = $lastBlock->hash();
         $createdAt = new DateTimeImmutable();
 
+        if (!$memPool->hasTransactions()) {
+            return null;
+        }
+
         while (true) {
-            $hash = Block::calculateHash($index, $previousHash, $createdAt, $data, $difficulty, $nonce);
+            $data = $memPool->transactionsToPlain();
+            $hash = Block::calculateHash($index, $previousHash, $createdAt, json_encode($data), $difficulty, $nonce);
             if ($this->hashDifficulty->hashMatchesDifficulty($hash, $difficulty)) {
-                $block = new Block($index, $hash, $previousHash, $createdAt, $data, $difficulty, $nonce);
+                $data = $memPool->transactionsToPlainAndDelete();
+
+                $block = new Block($index, $hash, $previousHash, $createdAt, json_encode($data), $difficulty, $nonce);
                 $this->blockchain->add($block);
 
                 return $block;

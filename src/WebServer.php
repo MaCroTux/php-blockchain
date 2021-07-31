@@ -23,6 +23,10 @@ final class WebServer
     public function __invoke(ServerRequestInterface $request): Response
     {
         switch ($request->getMethod().':'.trim($request->getUri()->getPath(), '/')) {
+            case 'POST:add-transaction':
+                return new JsonResponse($this->node->addTransaction($request->getBody()->getContents()));
+            case 'GET:transaction':
+                return new JsonResponse($this->node->transactions());
             case 'GET:blocks':
                 return new JsonResponse($this->node->blocks());
             case 'POST:mine':

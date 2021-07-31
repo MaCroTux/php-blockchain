@@ -46,6 +46,7 @@ final class ZeroPrefix implements HashDifficulty
         for ($i = 0; $i < $length; ++$i) {
             $binary .= $lookup[$hash[$i]];
         }
+        echo "MINING - CALCULATE HASH: " . $binary . PHP_EOL;
 
         return $binary;
     }

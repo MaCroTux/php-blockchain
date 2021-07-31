@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 
+use Blockchain\Node\InMemoryTransactionPool;
 use React\EventLoop\Factory;
 use React\Http\Server as HttpServer;
 use React\Socket\Server as SocketServer;
@@ -25,7 +26,8 @@ $loop = Factory::create();
 $p2pServer =  new Node\P2pServer(new Connector($loop));
 $node = new Node(
     new Miner(new Blockchain(Block::genesis(DIFFICULTY)), new HashDifficulty\ZeroPrefix()),
-    $p2pServer
+    $p2pServer,
+    new InMemoryTransactionPool()
 );
 $p2pServer->attachNode($node);
 

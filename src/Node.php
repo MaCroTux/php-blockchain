@@ -4,27 +4,26 @@ declare(strict_types=1);
 
 namespace Blockchain;
 
+use Blockchain\Node\MemPool;
 use Blockchain\Node\Message;
 use Blockchain\Node\P2pServer;
 use Blockchain\Node\Peer;
-use Blockchain\Node\Peers;
+use Blockchain\Node\Transaction;
 
 final class Node
 {
-    /**
-     * @var Miner
-     */
+    /** @var Miner */
     private $miner;
-
-    /**
-     * @var P2pServer
-     */
+    /** @var P2pServer */
     private $p2pServer;
+    /** @var MemPool */
+    private $memPool;
 
-    public function __construct(Miner $miner, P2pServer $p2pServer)
+    public function __construct(Miner $miner, P2pServer $p2pServer, MemPool $memPool)
     {
         $this->miner = $miner;
         $this->p2pServer = $p2pServer;
+        $this->memPool = $memPool;
     }
 
     /**
@@ -35,9 +34,14 @@ final class Node
         return $this->miner->blockchain()->blocks();
     }
 
-    public function mineBlock(string $data): Block
+    public function mineBlock(string $data): ?Block
     {
-        $block = $this->miner->mineBlock($data);
+        $block = $this->miner->mineBlock($data, $this->memPool);
+
+        if (null === $block) {
+            return $block;
+        }
+
         $this->p2pServer->broadcast(new Message(Message::BLOCKCHAIN, serialize($this->blockchain()->withLastBlockOnly())));
 
         return $block;
@@ -64,5 +68,20 @@ final class Node
     public function replaceBlockchain(Blockchain $blockchain): void
     {
         $this->miner->replaceBlockchain($blockchain);
+    }
+
+    public function addTransaction(string $getContents): array
+    {
+        $this->memPool->addTransaction(new Transaction($getContents));
+
+        return [];
+    }
+
+    /**
+     * @return array<Transaction>
+     */
+    public function transactions(): array
+    {
+        return $this->memPool->transactionsToPlain();
     }
 }
